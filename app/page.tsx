@@ -28,12 +28,14 @@ export default function HomePage() {
       <script>
         const width = 320;
         const height = 150;
-        let x = window.screenX;
-        let y = window.screenY;
-        let dx = (Math.random() - 0.5) * 12;
-        let dy = (Math.random() - 0.5) * 12;
-        if (Math.abs(dx) < 3) dx = dx < 0 ? -3 : 3;
-        if (Math.abs(dy) < 3) dy = dy < 0 ? -3 : 3;
+        
+        // Initialize position from current window position
+        let x = window.screenLeft || window.screenX || Math.random() * (screen.availWidth - width);
+        let y = window.screenTop || window.screenY || Math.random() * (screen.availHeight - height);
+        
+        // Random velocity with minimum speed
+        let dx = (Math.random() > 0.5 ? 1 : -1) * (3 + Math.random() * 5);
+        let dy = (Math.random() > 0.5 ? 1 : -1) * (3 + Math.random() * 5);
         
         const errorSound = new Audio("${errorSoundUrl}");
         
@@ -57,21 +59,46 @@ export default function HomePage() {
         setInterval(duplicate, 8000 + Math.random() * 4000);
         
         function animate() {
+          // Update position
           x += dx;
           y += dy;
           
+          // Screen boundaries (accounting for taskbar)
           const maxX = screen.availWidth - width;
           const maxY = screen.availHeight - height;
+          const minX = 0;
+          const minY = 0;
           
-          if (x <= 0) { x = 0; dx = Math.abs(dx); playSound(); }
-          if (x >= maxX) { x = maxX; dx = -Math.abs(dx); playSound(); }
-          if (y <= 0) { y = 0; dy = Math.abs(dy); playSound(); }
-          if (y >= maxY) { y = maxY; dy = -Math.abs(dy); playSound(); }
+          // Bounce off edges
+          if (x <= minX) { 
+            x = minX; 
+            dx = Math.abs(dx); 
+            playSound(); 
+          }
+          if (x >= maxX) { 
+            x = maxX; 
+            dx = -Math.abs(dx); 
+            playSound(); 
+          }
+          if (y <= minY) { 
+            y = minY; 
+            dy = Math.abs(dy); 
+            playSound(); 
+          }
+          if (y >= maxY) { 
+            y = maxY; 
+            dy = -Math.abs(dy); 
+            playSound(); 
+          }
           
-          try { window.moveTo(x, y); } catch(e) {}
-          requestAnimationFrame(animate);
+          // Move the window
+          window.moveTo(Math.round(x), Math.round(y));
+          
+          // Use setTimeout for more consistent timing
+          setTimeout(animate, 16);
         }
         
+        // Start animation after a short delay
         setTimeout(animate, 100);
       </script>
     </body>

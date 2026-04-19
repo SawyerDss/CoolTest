@@ -223,71 +223,37 @@ export default function HomePage() {
   useEffect(() => {
     // Check if popups are enabled on load
     setTimeout(() => {
-      checkPopups()
+      const enabled = checkPopups()
       setChecking(false)
+      if (enabled) {
+        startChaos()
+      }
     }, 500)
   }, [])
-
-  if (checking) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
-      </div>
-    )
-  }
-
-  if (!popupsEnabled) {
-    return (
-      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-4 relative overflow-hidden">
-        {/* Blurred background content */}
-        <div className="absolute inset-0 blur-xl opacity-30 pointer-events-none">
-          <div className="w-full h-full bg-gradient-to-br from-red-900 via-black to-red-950" />
-        </div>
-        
-        {/* Main content */}
-        <div className="relative z-10 flex flex-col items-center gap-8">
-          <div className="text-red-500 text-4xl md:text-6xl font-bold text-center animate-pulse">
-            POPUPS REQUIRED
-          </div>
-          
-          <div className="text-white text-lg md:text-xl text-center max-w-md">
-            This website requires popups to function. Please enable popups for this site and click the button below.
-          </div>
-          
-          {/* Arrow pointing to button */}
-          <div className="flex flex-col items-center animate-bounce">
-            <svg 
-              className="w-12 h-12 text-red-500" 
-              fill="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8-8-8z" transform="rotate(90 12 12)" />
-            </svg>
-          </div>
-          
-          <Button 
-            onClick={enablePopups}
-            size="lg"
-            className="bg-red-600 hover:bg-red-700 text-white text-xl px-8 py-6 font-bold animate-pulse"
-          >
-            ENABLE POPUPS
-          </Button>
-          
-          <div className="text-gray-500 text-sm text-center mt-4">
-            After allowing popups in your browser, click the button above
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4">
       <div className="text-center">
-        <div className="text-red-500 text-2xl font-bold mb-4">Chaos Unleashed</div>
-        <div className="text-gray-400">Close this tab if you dare...</div>
-        <div className="text-gray-600 text-sm mt-4">The popups will continue without this page.</div>
+        <div className="text-red-500 text-2xl font-bold mb-4">Welcome</div>
+        <div className="text-gray-400">Enjoy your stay...</div>
       </div>
+      
+      {/* Bottom right popup warning */}
+      {!popupsEnabled && !checking && (
+        <div className="fixed bottom-4 right-4 bg-red-900 border border-red-600 rounded-lg p-4 shadow-lg max-w-xs animate-pulse">
+          <div className="text-red-400 font-bold text-sm mb-2">Please Allow Popups</div>
+          <div className="text-gray-300 text-xs">
+            Enable popups for this site to experience the full effect.
+          </div>
+          <Button 
+            onClick={enablePopups}
+            size="sm"
+            className="mt-3 bg-red-600 hover:bg-red-700 text-white text-xs w-full"
+          >
+            Enable Popups
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
